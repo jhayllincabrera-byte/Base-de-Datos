@@ -1,0 +1,24 @@
+Ejercicio 1 — Gestión de Biblioteca, Crea una base de datos llamada 'biblioteca' con las tablas 'autores' y 'libros', incluyendo claves primarias y foráneas, inserciones y consultas.
+
+CREATE DATABASE IF NOT EXISTS biblioteca;
+USE biblioteca;
+
+CREATE TABLE IF NOT EXISTS autores (
+    id_autor INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    nacionalidad VARCHAR(50)
+);
+
+CREATE TABLE IF NOT EXISTS libros (
+    id_libro INT AUTO_INCREMENT PRIMARY KEY,
+    titulo VARCHAR(150) NOT NULL,
+    anio_publicacion INT,
+    id_autor INT,
+    FOREIGN KEY (id_autor) REFERENCES autores(id_autor)
+);
+
+INSERT IGNORE INTO autores (nombre, nacionalidad) VALUES
+('Gabriel García Márquez', 'Colombiana'),
+('Isabel Allende', 'Chilena'),
+('Mario Vargas Llosa', 'Peruana');
+
