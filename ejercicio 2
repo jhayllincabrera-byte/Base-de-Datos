@@ -1,0 +1,80 @@
+Ejercicio 2 — Sistema de Ventas
+Crea una base de datos llamada 'ventas' con las tablas 'clientes', 'productos' y 'facturas'. Define las relaciones, inserta datos y realiza consultas.
+
+-- 1. Crear base de datos
+CREATE DATABASE IF NOT EXISTS ventas;
+USE ventas;
+
+-- 2. Tabla clientes
+CREATE TABLE IF NOT EXISTS clientes (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    telefono VARCHAR(20)
+);
+
+-- 3. Tabla productos
+CREATE TABLE IF NOT EXISTS productos (
+    id_producto INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    precio DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL
+);
+
+-- 4. Tabla facturas
+CREATE TABLE IF NOT EXISTS facturas (
+    id_factura INT AUTO_INCREMENT PRIMARY KEY,
+    fecha DATE NOT NULL,
+    id_cliente INT NOT NULL,
+    id_producto INT NOT NULL,
+    cantidad INT NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente),
+    FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
+);
+
+-- 5. Inserción de datos
+
+-- Clientes
+INSERT IGNORE INTO clientes (nombre, email, telefono) VALUES
+('Juan Pérez', 'juan@email.com', '809-555-1234'),
+('María López', 'maria@email.com', '829-555-5678');
+
+-- Productos
+INSERT IGNORE INTO productos (nombre, precio, stock) VALUES
+('Laptop', 45000.00, 10),
+('Mouse', 850.00, 50),
+('Teclado', 1500.00, 30);
+
+-- Facturas
+INSERT INTO facturas (fecha, id_cliente, id_producto, cantidad) VALUES
+('2025-01-10', 1, 1, 1),
+('2025-01-11', 2, 2, 2);
+
+-- 6. Consultas
+
+-- Ver clientes
+SELECT * FROM clientes;
+
+-- Ver productos
+SELECT * FROM productos;
+
+-- Ver facturas con cliente y producto
+SELECT 
+    f.id_factura,
+    c.nombre AS cliente,
+    p.nombre AS producto,
+    f.cantidad,
+    p.precio,
+    (f.cantidad * p.precio) AS total
+FROM facturas f
+INNER JOIN clientes c ON f.id_cliente = c.id_cliente
+INNER JOIN productos p ON f.id_producto = p.id_producto;
+
+-- Total vendido por cliente
+SELECT 
+    c.nombre,
+    SUM(f.cantidad * p.precio) AS total_gastado
+FROM facturas f
+INNER JOIN clientes c ON f.id_cliente = c.id_cliente
+INNER JOIN productos p ON f.id_producto = p.id_producto
+GROUP BY c.nombre;
