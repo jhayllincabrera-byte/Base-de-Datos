@@ -1,0 +1,78 @@
+Ejercicio 3 — Control de Estudiantes
+Crea una base de datos llamada 'colegio' con las tablas 'estudiantes', 'cursos' y 'matriculas'. Incluye claves primarias, foráneas, inserciones y consultas.
+
+-- 1. Crear base de datos
+CREATE DATABASE IF NOT EXISTS colegio;
+USE colegio;
+
+-- 2. Tabla estudiantes
+CREATE TABLE IF NOT EXISTS estudiantes (
+    id_estudiante INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,
+    edad INT NOT NULL,
+    email VARCHAR(100) UNIQUE
+);
+
+-- 3. Tabla cursos
+CREATE TABLE IF NOT EXISTS cursos (
+    id_curso INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_curso VARCHAR(100) NOT NULL,
+    creditos INT NOT NULL
+);
+
+-- 4. Tabla matrículas
+CREATE TABLE IF NOT EXISTS matriculas (
+    id_matricula INT AUTO_INCREMENT PRIMARY KEY,
+    id_estudiante INT NOT NULL,
+    id_curso INT NOT NULL,
+    fecha_matricula DATE NOT NULL,
+    FOREIGN KEY (id_estudiante) REFERENCES estudiantes(id_estudiante),
+    FOREIGN KEY (id_curso) REFERENCES cursos(id_curso)
+);
+
+-- 5. Inserción de datos
+
+-- Estudiantes
+INSERT IGNORE INTO estudiantes (nombre, edad, email) VALUES
+('Carlos Martínez', 20, 'carlos@email.com'),
+('Ana Gómez', 22, 'ana@email.com'),
+('Luis Pérez', 19, 'luis@email.com');
+
+-- Cursos
+INSERT IGNORE INTO cursos (nombre_curso, creditos) VALUES
+('Matemáticas', 4),
+('Lengua Española', 3),
+('Informática', 5);
+
+-- Matrículas
+INSERT INTO matriculas (id_estudiante, id_curso, fecha_matricula) VALUES
+(1, 1, '2025-01-15'),
+(1, 3, '2025-01-15'),
+(2, 2, '2025-01-16'),
+(3, 1, '2025-01-17');
+
+-- 6. Consultas
+
+-- Ver todos los estudiantes
+SELECT * FROM estudiantes;
+
+-- Ver todos los cursos
+SELECT * FROM cursos;
+
+-- Ver matrículas con estudiante y curso
+SELECT 
+    e.nombre AS estudiante,
+    c.nombre_curso AS curso,
+    m.fecha_matricula
+FROM matriculas m
+INNER JOIN estudiantes e ON m.id_estudiante = e.id_estudiante
+INNER JOIN cursos c ON m.id_curso = c.id_curso;
+
+-- Ver cursos por estudiante
+SELECT 
+    e.nombre AS estudiante,
+    c.nombre_curso
+FROM matriculas m
+INNER JOIN estudiantes e ON m.id_estudiante = e.id_estudiante
+INNER JOIN cursos c ON m.id_curso = c.id_curso
+WHERE e.id_estudiante = 1;
